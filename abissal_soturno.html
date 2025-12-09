@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Abissal Soturno — Fichas RPG</title>
+<style>
+:root{
+  --bg:#07030a;
+  --panel:#0f0b14;
+  --muted:#dcd6f4;
+  --accent:#8a5dd7;
+  --accent2:#6ee39a;
+  --card:#16121b;
+  --soft:#241c2a;
+  --danger:#c84b6d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(900px 500px at 10% 10%, rgba(138,93,215,0.06), transparent 10%),
+    radial-gradient(700px 400px at 90% 90%, rgba(110,227,154,0.02), transparent 10%),
+    var(--bg);
+  color:var(--muted);
+  -webkit-font-smoothing:antialiased;
+  padding:18px;
+  min-height:100vh;
+}
+
+/* header / menu */
+.centered{max-width:1100px;margin:0 auto}
+.titleBox{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;
+}
+.brand{
+  display:flex;gap:12px;align-items:center;
+}
+.logo{
+  width:72px;height:72px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),#4e3db3);
+  box-shadow:0 6px 28px rgba(138,93,215,0.18), inset 0 -6px 18px rgba(0,0,0,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#fff;font-size:22px;
+}
+.brand h1{margin:0;font-size:20px}
+.brand p{margin:0;font-size:12px;color:#c9bff4}
+
+/* main menu buttons */
+.menuCards{display:flex;gap:12px;margin-bottom:14px}
+.card{
+  background:linear-gradient(180deg,var(--card), #0b0710);
+  border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  border:1px solid rgba(138,93,215,0.04);
+}
+.bigBtn{
+  padding:14px 18px;border-radius:12px;border:none;cursor:pointer;font-weight:800;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));color:#051018;
+  font-size:18px;width:100%;
+  box-shadow:0 12px 30px rgba(138,93,215,0.12);
+}
+.ghostBtn{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted);cursor:pointer}
+
+/* layout main */
+.layout{display:grid;grid-template-columns:1fr 360px;gap:16px}
+@media (max-width:940px){ .layout{grid-template-columns:1fr} }
+
+/* left panel (creation / editor) */
+.panel{padding:14px;border-radius:10px;background:linear-gradient(180deg,#0e0814, #0b0710);border:1px solid rgba(255,255,255,0.02)}
+.row{display:flex;gap:8px;align-items:center}
+.input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);font-size:14px;margin-top:8px}
+.smallInput{width:86px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);text-align:center}
+
+/* attributes */
+.attrs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.attrBox{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
+.attrBox label{font-size:14px}
+.attrBox input{width:56px;padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.02);text-align:center;color:var(--muted)}
+
+/* perks/perícias highlight */
+.perkBtn{
+  padding:12px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:800;
+  background:linear-gradient(90deg,#6b43a9,#7ef0b0);color:#04121a;font-size:16px;
+  box-shadow:0 10px 26px rgba(110,227,154,0.06), inset 0 -4px 18px rgba(0,0,0,0.06);
+  margin-top:12px;
+}
+
+/* bars */
+.stat{margin-top:12px}
+.statLabel{display:flex;justify-content:space-between;align-items:center}
+.barWrap{height:18px;background:rgba(255,255,255,0.03);border-radius:9px;overflow:hidden;margin-top:6px}
+.fill{height:100%;transition:width 260ms linear;background:linear-gradient(90deg,#8a5dd7,#6ee39a);}
+
+/* small controls */
+.ctrls{display:flex;gap:8px;margin-top:8px}
+.smallBtn{padding:8px 10px;border-radius:7px;border:none;cursor:pointer;font-weight:700}
+.red{background:#b93a6a;color:#fff}
+.blue{background:#3b6bd9;color:#fff}
+.green{background:#1fa35b;color:#fff}
+
+/* right column */
+.rightCol{display:flex;flex-direction:column;gap:12px}
+.infoCard{padding:12px;border-radius:10px;background:linear-gradient(180deg,#0c0712, #0a0610);border:1px solid rgba(255,255,255,0.02)}
+.smallStat{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px}
+.skillsLine{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;font-size:14px;color:#e8e2ff}
+
+/* players list */
+.listItem{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:8px}
+.smallAction{padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+
+/* screen overlay / pages */
+.page{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(5,3,10,0.9), rgba(8,6,14,0.98));z-index:200;
+}
+.page .inner{width:100%;max-width:980px;padding:16px;border-radius:12px;background:linear-gradient(180deg,#0d0720,#0f0822);border:1px solid rgba(138,93,215,0.06)}
+.skillGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.skillItem{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
+.skillItem input{transform:scale(1.05)}
+
+/* footer small */
+.hint{font-size:13px;color:#bbaee7;margin-top:6px}
+
+/* responsive */
+@media (max-width:640px){
+  .attrs{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
+  .menuCards{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="centered">
+
+  <!-- HEADER / TITLE -->
+  <div class="titleBox">
+    <div class="brand">
+      <div class="logo">AS</div>
+      <div>
+        <h1>ABISSAL SOTURNO</h1>
+        <p>Organizador de Fichas — Terror Sobrenatural</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="font-size:12px;color:#cdbef0;text-align:right">Arquivo local: fichas salvas no seu navegador</div>
+    </div>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div class="menuCards" style="margin-bottom:18px">
+    <div class="card" style="flex:1">
+      <h2 style="margin:0 0 8px 0">Entrar</h2>
+      <div class="row" style="gap:10px">
+        <button class="bigBtn" id="btnMestre">MESTRE</button>
+        <button class="ghostBtn" id="btnPlayer">JOGADOR</button>
+      </div>
+      <div class="hint" style="margin-top:10px">Dica: Mestre usa senha. Jogador deve informar seu nome para ver apenas suas fichas.</div>
+    </div>
+
+    <div class="card" style="width:320px">
+      <h3 style="margin-top:0">Rápido</h3>
+      <p style="margin:6px 0 10px 0;color:#c9bff4">Crie fichas, salve personagens e o Mestre pode apagar fichas no dispositivo.</p>
+      <div style="display:flex;gap:8px">
+        <button class="bigBtn" id="quickCreate" style="background:linear-gradient(90deg,#7f3fb1,#7ef0b0)">Criar Personagem</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT (hidden by default until player chooses) -->
+  <div id="mainArea" style="display:none">
+    <div class="layout">
+      <!-- LEFT: Editor / Criador -->
+      <div>
+        <div class="panel card" id="editorPanel">
+          <h2 id="editorTitle">Criar / Editar Personagem</h2>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="editorOwner" class="input" placeholder="Nome do Jogador (obrigatório) - Ex: João">
+            <input id="editorCharName" class="input" placeholder="Nome do Personagem">
+          </div>
+
+          <!-- Atributos -->
+          <div style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <h3 style="margin:0">Atributos</h3>
+              <div style="font-size:13px;color:#cfc3ff">Todos começam com 1 — você tem <strong id="ptsLeft">4</strong> pontos</div>
+            </div>
+
+            <div class="attrs">
+              <div class="attrBox"><label>Força</label><input id="e_for" type="number" min="0" max="3" value="1"></div>
+              <div class="attrBox"><label>Destreza</label><input id="e_dex" type="number" min="0" max="3" value="1"></div>
+              <div class="attrBox"><label>Constituição</label><input id="e_con" type="number" min="0" max="3" value="1"></div>
+              <div class="attrBox"><label>Inteligência</label><input id="e_int" type="number" min="0" max="3" value="1"></div>
+              <div class="attrBox"><label>Presença</label><input id="e_pre" type="number" min="0" max="3" value="1"></div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+              <button id="btnCalc" class="perkBtn">PRONTO — Calcular HP / SAN / EN</button>
+              <button id="openPerks" class="perkBtn" style="background:linear-gradient(90deg,#b48adf,#7ef0b0)">PERÍCIAS</button>
+            </div>
+            <div class="hint">Destaque: botão PERÍCIAS na criação (tela separada)</div>
+          </div>
+
+          <!-- Bars -->
+          <div class="stat">
+            <div class="statLabel"><strong>HP</strong><span id="editorHP">—</span></div>
+            <div class="barWrap"><div id="editorHPFill" class="fill" style="width:0%"></div></div>
+            <div class="ctrls">
+              <button class="smallBtn red" id="hpDec">-</button>
+              <button class="smallBtn red" id="hpInc">+</button>
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel"><strong>Sanidade</strong><span id="editorSAN">—</span></div>
+            <div class="barWrap"><div id="editorSANFill" class="fill" style="width:0%"></div></div>
+            <div class="ctrls">
+              <button class="smallBtn blue" id="sanDec">-</button>
+              <button class="smallBtn blue" id="sanInc">+</button>
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel"><strong>Energia</strong><span id="editorEN">—</span></div>
+            <div class="barWrap"><div id="editorENFill" class="fill" style="width:0%"></div></div>
+            <div class="ctrls">
+              <button class="smallBtn green" id="enDec">-</button>
+              <button class="smallBtn green" id="enInc">+</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <div style="flex:1">
+              <div style="font-size:13px;color:#cfc3ff">DEF</div>
+              <div id="editorDEF" style="font-weight:700;font-size:18px">—</div>
+            </div>
+
+            <div style="flex:1">
+              <div style="font-size:13px;color:#cfc3ff">FOR</div>
+              <div id="editorFOR" style="font-weight:700;font-size:18px">—</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="display:flex;gap:8px">
+              <button id="saveCharacter" class="bigBtn" style="background:linear-gradient(90deg,#7f3fb1,#7ef0b0)">SALVAR PERSONAGEM</button>
+              <button id="clearEditor" class="ghostBtn">LIMPAR</button>
+            </div>
+            <div style="margin-top:8px;font-size:13px;color:#c9bff4">Depois de salvar, a ficha aparecerá na "Abra dos Jogadores" para o nome do jogador informado.</div>
+          </div>
+
+        </div>
+
+        <!-- bottom: background etc -->
+        <div class="panel card" style="margin-top:12px">
+          <h3>Background / Extras</h3>
+          <textarea id="editorBackground" class="input" rows="3" placeholder="Background"></textarea>
+          <input id="editorHobbies" class="input" placeholder="Hobbies">
+          <input id="editorFood" class="input" placeholder="Comida favorita">
+        </div>
+      </div>
+
+      <!-- RIGHT: Jogador Panel -->
+      <div class="rightCol">
+        <div class="infoCard card">
+          <h3>Abra dos Jogadores</h3>
+
+          <div style="margin-top:8px">
+            <input id="playerName" class="input" placeholder="Digite seu nome de jogador e pressione Entrar">
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="btnEnterPlayer" class="bigBtn" style="background:linear-gradient(90deg,#7f3fb1,#a0f0b0)">Entrar</button>
+              <button id="btnListAll" class="ghostBtn">Ver todas (apenas Mestre)</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Personagens de: <span id="currentPlayer">—</span></h4>
+            <div id="playerList" style="margin-top:8px"></div>
+          </div>
+        </div>
+
+        <div class="infoCard card">
+          <h3>Ficha (visual)</h3>
+          <div class="smallStat"><div>Nome Jogador</div><div id="showOwner">—</div></div>
+          <div class="smallStat"><div>Nome Personagem</div><div id="showCharName">—</div></div>
+          <div class="smallStat"><div>Perícias</div><div id="showSkills">—</div></div>
+          <div style="margin-top:8px"><button id="btnQuickOpenEditor" class="ghostBtn">Abrir editor para criar/editar</button></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER / small -->
+  <div style="margin-top:18px;font-size:12px;color:#b9aee8">Arquivo único — tudo é salvo no seu navegador. Se quiser compartilhar o "site", envie este arquivo .html — cada usuário terá seu próprio espaço de fichas locais.</div>
+
+</div>
+
+<!-- PERÍCIAS - PÁGINA SEPARADA -->
+<div class="page" id="perksPage" aria-hidden="true">
+  <div class="inner card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">Selecione até 4 Perícias</h2>
+      <div>
+        <button class="ghostBtn" id="cancelPerks">Cancelar</button>
+        <button class="bigBtn" id="confirmPerks">Confirmar</button>
+      </div>
+    </div>
+
+    <div class="hint" style="margin-top:8px">Toque para selecionar. (Máximo 4)</div>
+
+    <div class="skillGrid" id="perksGrid" style="margin-top:12px">
+      <!-- gerado via JS -->
+    </div>
+
+    <div style="margin-top:12px;text-align:right;color:#c9bff4">Selecionadas: <span id="perksCount">0</span>/4</div>
+  </div>
+</div>
+
+<!-- MESTRE - PÁGINA -->
+<div class="page" id="mestrePage" aria-hidden="true">
+  <div class="inner card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">Painel do Mestre — Abissal Soturno</h2>
+      <div>
+        <button class="ghostBtn" id="closeMestre">Fechar</button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="btnMestreRefresh" class="smallAction">Atualizar Lista</button>
+        <button id="btnDeleteAll" class="smallAction" style="background:#7a0b2b;color:#fff">Apagar tudo</button>
+      </div>
+
+      <div id="mestreList" style="margin-top:12px"></div>
+      <div style="margin-top:12px;color:#c9bff4;font-size:13px">Observação: Apagar aqui remove as fichas do dispositivo.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  Abissal Soturno — Single-file system
+  - Save characters to localStorage key "abissal_fichas"
+  - Players view filtered by owner name (entered)
+  - Master area protected by password "28012005"
+  - Perícias selection on a separate page
+*/
+
+/* ---------- Dados constantes ---------- */
+const SKILLS = [
+  "Atletismo","Furtividade","Mira","Reflexo","Arremesso","Luta",
+  "Investigação","Sobrevivência","História","Medicina","Ciências","Mecanismo",
+  "Tecnologia","Intimidação","Enganação","Percepção","Resistência Mental",
+  "Ocultismo","Intuição","Diplomacia"
+];
+const STORAGE_KEY = "abissal_fichas_v1";
+
+/* ---------- Elementos ---------- */
+/* Menu */
+const btnMestre = document.getElementById('btnMestre');
+const btnPlayer = document.getElementById('btnPlayer');
+const quickCreate = document.getElementById('quickCreate');
+
+/* Main area */
+const mainArea = document.getElementById('mainArea');
+const btnEnterPlayer = document.getElementById('btnEnterPlayer');
+const playerNameInput = document.getElementById('playerName');
+const currentPlayerLabel = document.getElementById('currentPlayer');
+const playerList = document.getElementById('playerList');
+const btnListAll = document.getElementById('btnListAll');
+
+/* Editor */
+const editorOwner = document.getElementById('editorOwner');
+const editorCharName = document.getElementById('editorCharName');
+const e_for = document.getElementById('e_for');
+const e_dex = document.getElementById('e_dex');
+const e_con = document.getElementById('e_con');
+const e_int = document.getElementById('e_int');
+const e_pre = document.getElementById('e_pre');
+
+const btnCalc = document.getElementById('btnCalc');
+const openPerks = document.getElementById('openPerks');
+
+const editorHP = document.getElementById('editorHP');
+const editorHPFill = document.getElementById('editorHPFill');
+const editorSAN = document.getElementById('editorSAN');
+const editorSANFill = document.getElementById('editorSANFill');
+const editorEN = document.getElementById('editorEN');
+const editorENFill = document.getElementById('editorENFill');
+
+const editorDEF = document.getElementById('editorDEF');
+const editorFOR = document.getElementById('editorFOR');
+
+const hpDec = document.getElementById('hpDec');
+const hpInc = document.getElementById('hpInc');
+const sanDec = document.getElementById('sanDec');
+const sanInc = document.getElementById('sanInc');
+const enDec = document.getElementById('enDec');
+const enInc = document.getElementById('enInc');
+
+const editorBackground = document.getElementById('editorBackground');
+const editorHobbies = document.getElementById('editorHobbies');
+const editorFood = document.getElementById('editorFood');
+
+const ptsLeft = document.getElementById('ptsLeft');
+const saveCharacter = document.getElementById('saveCharacter');
+const clearEditor = document.getElementById('clearEditor');
+
+const btnQuickOpenEditor = document.getElementById('btnQuickOpenEditor');
+
+const showOwner = document.getElementById('showOwner');
+const showCharName = document.getElementById('showCharName');
+const showSkills = document.getElementById('showSkills');
+
+/* Perks page */
+const perksPage = document.getElementById('perksPage');
+const perksGrid = document.getElementById('perksGrid');
+const perksCount = document.getElementById('perksCount');
+const cancelPerks = document.getElementById('cancelPerks');
+const confirmPerks = document.getElementById('confirmPerks');
+
+/* Mestre page */
+const mestrePage = document.getElementById('mestrePage');
+const btnMestreRefresh = document.getElementById('btnMestreRefresh');
+const mestreList = document.getElementById('mestreList');
+const btnDeleteAll = document.getElementById('btnDeleteAll');
+const closeMestre = document.getElementById('closeMestre');
+
+/* Quick create */
+const editorTitle = document.getElementById('editorTitle');
+
+/* State */
+let currentHP = 0, currentSAN = 0, currentEN = 0;
+let maxHP = 0, maxSAN = 0, maxEN = 0;
+let selectedPerks = []; // array of strings
+let editingId = null; // if editing existing character (id)
+let currentPlayerName = ""; // logged-in player name
+
+/* ---------- Utilities: storage ---------- */
+function readStorage(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  }catch(e){ console.warn("Erro leitura storage", e); return []; }
+}
+function writeStorage(arr){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }catch(e){ console.warn("Erro gravação storage", e); }
+}
+
+/* generate id */
+function genId(){ return 'c_' + Math.random().toString(36).slice(2,9); }
+
+/* ---------- Helper: update points left ---------- */
+function updatePointsLeft(){
+  const used = (parseInt(e_for.value||0)-1) + (parseInt(e_dex.value||0)-1) + (parseInt(e_con.value||0)-1) + (parseInt(e_int.value||0)-1) + (parseInt(e_pre.value||0)-1);
+  const rest = 4 - used;
+  ptsLeft.textContent = rest;
+  return rest;
+}
+document.querySelectorAll('#e_for,#e_dex,#e_con,#e_int,#e_pre').forEach(inp=>{
+  inp.addEventListener('input', ()=>{
+    if (parseInt(inp.value) > 3) inp.value = 3;
+    if (parseInt(inp.value) < 0) inp.value = 0;
+    updatePointsLeft();
+  });
+});
+
+/* ---------- Calculation: from attributes ---------- */
+function calcFromAttrs(){
+  const F = parseInt(e_for.value||0);
+  const D = parseInt(e_dex.value||0);
+  const C = parseInt(e_con.value||0);
+  const I = parseInt(e_int.value||0);
+  const P = parseInt(e_pre.value||0);
+
+  maxHP = 10 + (C * 2);
+  maxSAN = 10 + (P * 2);
+  maxEN = 5 + C + F;
+
+  editorDEF.textContent = (9 * D).toString();
+  editorFOR.textContent = F.toString();
+
+  // if current not set, set to max
+  if (currentHP === 0) currentHP = maxHP;
+  if (currentSAN === 0) currentSAN = maxSAN;
+  if (currentEN === 0) currentEN = maxEN;
+
+  updateEditorBars();
+}
+
+/* update editor bars */
+function updateEditorBars(){
+  if (currentHP > maxHP) currentHP = maxHP;
+  if (currentSAN > maxSAN) currentSAN = maxSAN;
+  if (currentEN > maxEN) currentEN = maxEN;
+  if (currentHP < 0) currentHP = 0;
+  if (currentSAN < 0) currentSAN = 0;
+  if (currentEN < 0) currentEN = 0;
+
+  const hpPct = maxHP ? (currentHP / maxHP * 100) : 0;
+  const sanPct = maxSAN ? (currentSAN / maxSAN * 100) : 0;
+  const enPct = maxEN ? (currentEN / maxEN * 100) : 0;
+
+  editorHP.textContent = `${currentHP}/${maxHP}`;
+  editorSAN.textContent = `${currentSAN}/${maxSAN}`;
+  editorEN.textContent = `${currentEN}/${maxEN}`;
+
+  editorHPFill.style.width = hpPct + '%';
+  editorSANFill.style.width = sanPct + '%';
+  editorENFill.style.width = enPct + '%';
+
+  showOwner.textContent = editorOwner.value || '—';
+  showCharName.textContent = editorCharName.value || '—';
+  showSkills.textContent = selectedPerks.length ? selectedPerks.join(' | ') : '—';
+}
+
+/* editor inc/dec */
+hpDec.addEventListener('click', ()=>{ currentHP--; updateEditorBars(); });
+hpInc.addEventListener('click', ()=>{ currentHP++; updateEditorBars(); });
+sanDec.addEventListener('click', ()=>{ currentSAN--; updateEditorBars(); });
+sanInc.addEventListener('click', ()=>{ currentSAN++; updateEditorBars(); });
+enDec.addEventListener('click', ()=>{ currentEN--; updateEditorBars(); });
+enInc.addEventListener('click', ()=>{ currentEN++; updateEditorBars(); });
+
+/* PRONTO button: calc and set max/current */
+btnCalc.addEventListener('click', ()=>{
+  const rest = updatePointsLeft();
+  if (rest < 0){ alert("Você distribuiu pontos demais! Retire pontos antes de confirmar."); return; }
+  // calc
+  calcFromAttrs();
+  // set current to max
+  currentHP = maxHP; currentSAN = maxSAN; currentEN = maxEN;
+  updateEditorBars();
+});
+
+/* clear editor */
+clearEditor.addEventListener('click', ()=>{
+  if (!confirm("Limpar todos os campos e começar do zero?")) return;
+  editorOwner.value = '';
+  editorCharName.value = '';
+  e_for.value = 1; e_dex.value = 1; e_con.value = 1; e_int.value = 1; e_pre.value = 1;
+  editorBackground.value = ''; editorHobbies.value = ''; editorFood.value = '';
+  selectedPerks = [];
+  editingId = null;
+  currentHP = 0; currentSAN = 0; currentEN = 0;
+  calcFromAttrs();
+  updateEditorBars();
+  updateSkillsDisplay();
+});
+
+/* ---------- PERÍCIAS (tela separada) ---------- */
+function openPerks(){
+  perksGrid.innerHTML = '';
+  SKILLS.forEach(name=>{
+    const el = document.createElement('label');
+    el.className = 'skillItem';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = name;
+    if (selectedPerks.includes(name)) cb.checked = true;
+    cb.addEventListener('change', ()=>{
+      const checked = Array.from(perksGrid.querySelectorAll('input:checked')).length;
+      if (cb.checked && checked > 4){
+        cb.checked = false;
+        alert("Máximo 4 perícias.");
+        return;
+      }
+      perksCount.textContent = checked;
+    });
+    const txt = document.createElement('div');
+    txt.textContent = name;
+    el.appendChild(cb); el.appendChild(txt);
+    perksGrid.appendChild(el);
+  });
+  // count
+  const initialCount = selectedPerks.length;
+  perksCount.textContent = initialCount;
+  perksPage.style.display = 'flex';
+  perksPage.setAttribute('aria-hidden','false');
+}
+openPerks.addEventListener('click', openPerks);
+document.getElementById('cancelPerks').addEventListener('click', ()=>{
+  perksPage.style.display = 'none';
+  perksPage.setAttribute('aria-hidden','true');
+});
+confirmPerks.addEventListener('click', ()=>{
+  const chosen = Array.from(perksGrid.querySelectorAll('input:checked')).map(i=>i.value);
+  selectedPerks = chosen.slice(0,4);
+  perksPage.style.display = 'none';
+  perksPage.setAttribute('aria-hidden','true');
+  updateSkillsDisplay();
+});
+
+/* update skills text in editor panel */
+function updateSkillsDisplay(){
+  showSkills.textContent = selectedPerks.length ? selectedPerks.join(' | ') : '—';
+}
+
+/* ---------- Save character (manual) ---------- */
+function collectCharacterData(){
+  // Basic validation
+  const owner = (editorOwner.value || '').trim();
+  if (!owner){ alert("Informe o Nome do Jogador (owner) antes de salvar."); return null; }
+  const charName = (editorCharName.value || '').trim() || 'Sem Nome';
+
+  // ensure points distribution valid
+  const rest = updatePointsLeft();
+  if (rest < 0){ alert("Você distribuiu pontos demais!"); return null; }
+
+  // recalc maxima
+  calcFromAttrs();
+
+  const data = {
+    id: editingId || genId(),
+    owner: owner,
+    charName: charName,
+    attributes: {
+      for: parseInt(e_for.value||0),
+      dex: parseInt(e_dex.value||0),
+      con: parseInt(e_con.value||0),
+      int: parseInt(e_int.value||0),
+      pre: parseInt(e_pre.value||0)
+    },
+    hpCurrent: currentHP,
+    sanCurrent: currentSAN,
+    enCurrent: currentEN,
+    hpMax: maxHP,
+    sanMax: maxSAN,
+    enMax: maxEN,
+    def: 9 * (parseInt(e_dex.value||0)),
+    perks: selectedPerks.slice(),
+    background: editorBackground.value || '',
+    hobbies: editorHobbies.value || '',
+    food: editorFood.value || '',
+    savedAt: (new Date()).toISOString()
+  };
+  return data;
+}
+
+saveCharacter.addEventListener('click', ()=>{
+  const char = collectCharacterData();
+  if (!char) return;
+  const all = readStorage();
+  // if editing existing, replace
+  const idx = all.findIndex(x=>x.id === char.id);
+  if (idx >= 0) all[idx] = char;
+  else all.push(char);
+  writeStorage(all);
+  alert("Personagem salvo!");
+  // if current player matches owner, refresh list
+  if (currentPlayerName && currentPlayerName === char.owner){
+    renderPlayerList(currentPlayerName);
+  }
+});
+
+/* ---------- Player area functions ---------- */
+btnPlayer.addEventListener('click', ()=>{
+  // show main area and focus player input
+  mainArea.style.display = 'block';
+  document.getElementById('playerName').focus();
+});
+quickCreate.addEventListener('click', ()=>{
+  mainArea.style.display = 'block';
+  editorOwner.value = '';
+  editorCharName.value = '';
+  // clear but leave default attrs
+  e_for.value = 1; e_dex.value = 1; e_con.value = 1; e_int.value = 1; e_pre.value = 1;
+  selectedPerks = [];
+  editingId = null;
+  currentHP = 0; currentSAN = 0; currentEN = 0;
+  calcFromAttrs(); updateEditorBars(); updateSkillsDisplay();
+});
+
+btnEnterPlayer.addEventListener('click', ()=>{
+  const name = (playerNameInput.value || '').trim();
+  if (!name){ alert("Digite seu nome de jogador."); return; }
+  currentPlayerName = name;
+  currentPlayerLabel.textContent = currentPlayerName;
+  document.getElementById('currentPlayer').textContent = currentPlayerName;
+  renderPlayerList(currentPlayerName);
+});
+
+btnListAll.addEventListener('click', ()=>{
+  // hint: this button is only convenience; master can see all via password only
+  alert("A lista completa de personagens só pode ser vista pelo Mestre (senha).");
+});
+
+/* render player's characters */
+function renderPlayerList(player){
+  playerList.innerHTML = '';
+  const all = readStorage();
+  const filtered = all.filter(c => (c.owner || '') === player);
+  if (filtered.length === 0){
+    playerList.innerHTML = '<div style="color:#c9bff4">Nenhum personagem salvo para este jogador.</div>';
+    return;
+  }
+  filtered.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'listItem';
+    el.innerHTML = `<div>
+      <div style="font-weight:700">${c.charName}</div>
+      <div style="font-size:13px;color:#c9bff4">${c.owner} • HP ${c.hpCurrent}/${c.hpMax} • ${c.perks && c.perks.length ? c.perks.join(' | ') : 'Sem perícias'}</div>
+    </div>`;
+    const actions = document.createElement('div');
+    const btnOpen = document.createElement('button'); btnOpen.className='smallAction'; btnOpen.textContent='Abrir';
+    btnOpen.addEventListener('click', ()=>{ openCharacterInEditor(c.id); });
+    const btnDel = document.createElement('button'); btnDel.className='smallAction'; btnDel.textContent='Excluir';
+    btnDel.style.background='#7a0b2b'; btnDel.style.color='#fff';
+    btnDel.addEventListener('click', ()=>{
+      if (!confirm("Excluir este personagem?")) return;
+      deleteCharacter(c.id);
+      renderPlayerList(player);
+    });
+    actions.appendChild(btnOpen); actions.appendChild(btnDel);
+    el.appendChild(actions);
+    playerList.appendChild(el);
+  });
+}
+
+/* open character into editor (for editing) */
+function openCharacterInEditor(id){
+  const all = readStorage();
+  const c = all.find(x=>x.id === id);
+  if (!c){ alert("Personagem não encontrado."); return; }
+  // show editor
+  mainArea.style.display = 'block';
+  editorOwner.value = c.owner;
+  editorCharName.value = c.charName;
+  e_for.value = c.attributes.for || 1;
+  e_dex.value = c.attributes.dex || 1;
+  e_con.value = c.attributes.con || 1;
+  e_int.value = c.attributes.int || 1;
+  e_pre.value = c.attributes.pre || 1;
+  editorBackground.value = c.background || '';
+  editorHobbies.value = c.hobbies || '';
+  editorFood.value = c.food || '';
+  selectedPerks = c.perks ? c.perks.slice() : [];
+  // set editing id
+  editingId = c.id;
+  // restore HP/SAN/EN
+  maxHP = c.hpMax || (10 + (parseInt(e_con.value||0)*2));
+  maxSAN = c.sanMax || (10 + (parseInt(e_pre.value||0)*2));
+  maxEN = c.enMax || (5 + (parseInt(e_con.value||0) + parseInt(e_for.value||0)));
+  currentHP = c.hpCurrent != null ? c.hpCurrent : maxHP;
+  currentSAN = c.sanCurrent != null ? c.sanCurrent : maxSAN;
+  currentEN = c.enCurrent != null ? c.enCurrent : maxEN;
+  updatePointsLeft();
+  updateEditorBars();
+  updateSkillsDisplay();
+  editorTitle.textContent = 'Editar Personagem';
+}
+
+/* delete character by id */
+function deleteCharacter(id){
+  let all = readStorage();
+  all = all.filter(x=>x.id !== id);
+  writeStorage(all);
+}
+
+/* ---------- Master area ---------- */
+btnMestre.addEventListener('click', ()=>{
+  const pwd = prompt("Senha do Mestre:");
+  if (pwd === null) return;
+  if (pwd === '28012005'){
+    // open mestre page
+    openMestrePage();
+  } else {
+    alert("Senha incorreta.");
+  }
+});
+
+function openMestrePage(){
+  mestrePage.style.display = 'flex';
+  mestrePage.setAttribute('aria-hidden','false');
+  renderMestreList();
+}
+
+function renderMestreList(){
+  mestreList.innerHTML = '';
+  const all = readStorage();
+  if (!all.length){
+    mestreList.innerHTML = '<div style="color:#c9bff4">Nenhuma ficha salva no dispositivo.</div>';
+    return;
+  }
+  all.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'listItem';
+    el.innerHTML = `<div>
+      <div style="font-weight:700">${c.charName} <span style="font-weight:400;color:#c9bff4">(${c.owner})</span></div>
+      <div style="font-size:13px;color:#c9bff4">HP ${c.hpCurrent}/${c.hpMax} • Perícias: ${c.perks && c.perks.length ? c.perks.join(' | ') : '—'}</div>
+    </div>`;
+    const actions = document.createElement('div');
+    const btnOpen = document.createElement('button'); btnOpen.className='smallAction'; btnOpen.textContent='Abrir';
+    btnOpen.addEventListener('click', ()=>{ openCharacterInEditor(c.id); mestrePage.style.display='none'; });
+    const btnDel = document.createElement('button'); btnDel.className='smallAction'; btnDel.textContent='Excluir';
+    btnDel.style.background='#7a0b2b'; btnDel.style.color='#fff';
+    btnDel.addEventListener('click', ()=>{
+      if (!confirm("Mestre: excluir permanentemente este personagem?")) return;
+      deleteCharacter(c.id); renderMestreList();
+    });
+    actions.appendChild(btnOpen); actions.appendChild(btnDel);
+    el.appendChild(actions);
+    mestreList.appendChild(el);
+  });
+}
+
+/* mestre controls */
+btnMestreRefresh.addEventListener('click', renderMestreList);
+btnDeleteAll.addEventListener('click', ()=>{
+  if (!confirm("Apagar todas as fichas do dispositivo? Esta ação é irreversível.")) return;
+  writeStorage([]);
+  renderMestreList();
+});
+closeMestre.addEventListener('click', ()=>{
+  mestrePage.style.display = 'none';
+  mestrePage.setAttribute('aria-hidden','true');
+});
+
+/* close mestre page on pressing ESC */
+window.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape'){
+    if (perksPage.style.display === 'flex'){ perksPage.style.display='none'; perksPage.setAttribute('aria-hidden','true'); }
+    if (mestrePage.style.display === 'flex'){ mestrePage.style.display='none'; mestrePage.setAttribute('aria-hidden','true'); }
+  }
+});
+
+/* ---------- Initialization ---------- */
+(function init(){
+  // default values
+  updatePointsLeft();
+  calcFromAttrs();
+  updateEditorBars();
+  updateSkillsDisplay();
+})();
+
+/* ---------- Utility: open editor from quick open button ---------- */
+btnQuickOpenEditor.addEventListener('click', ()=>{
+  mainArea.style.display = 'block';
+  document.getElementById('editorOwner').focus();
+});
+
+/* ---------- Show player / helper when clicking character in player list ---------- */
+/* Already handled in renderPlayerList -> Abrir button that populates editor */
+
+/* ---------- when saving or deleting, if current player is set, refresh list ---------- */
+/* Already done at saveCharacter; deleteCharacter will refresh via render player call after confirmation in UI */
+
+/* ---------- Optional: clicking on top-level Quick Create from menu should open editor and clear ---------- */
+document.getElementById('quickCreate').addEventListener('click', ()=>{
+  mainArea.style.display = 'block';
+  editorOwner.value = '';
+  editorCharName.value = '';
+  e_for.value = 1; e_dex.value = 1; e_con.value = 1; e_int.value = 1; e_pre.value = 1;
+  selectedPerks = [];
+  editingId = null;
+  currentHP = 0; currentSAN = 0; currentEN = 0;
+  calcFromAttrs(); updateEditorBars(); updateSkillsDisplay();
+});
+
+/* ---------- small convenience: when pressing Enter in playerName input, trigger enter action ---------- */
+playerNameInput.addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter') btnEnterPlayer.click();
+});
+
+/* ---------- ensure lists refresh when storage changes in other tabs (edge case) ---------- */
+window.addEventListener('storage', (e)=>{
+  if (e.key === STORAGE_KEY){
+    if (currentPlayerName) renderPlayerList(currentPlayerName);
+    if (mestrePage.style.display === 'flex') renderMestreList();
+  }
+});
+</script>
+
+</body>
+</html>
